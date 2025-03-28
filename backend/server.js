@@ -60,19 +60,22 @@ app.delete("/deleteData/:id",async(req,res)=>{
   }
 });
 
-app.get("/data/sum",async(req,res)=>{
-   try {
-    const SUM_OF_MONEYSPENT = await Finance.aggregate([
-        {
-            $group:{
-                id:null,
-                moneySpent: {$sum:"$totalMoneySpent"},
+// GET sum of moneySpent
+app.get("/data/sum", async (req, res) => {
+    try {
+        const SUM_OF_MONEYSPENT = await Finance.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalMoneySpent: { $sum: "$moneySpent" },
+                }
             }
-        }
-    ]);
-    const moneySpent = SUM_OF_MONEYSPENT.length > 0 ?  SUM_OF_MONEYSPENT[0] : 0 ;
-    res.status(200).json({message:"Succssfuly retrieved sum of moneySpent"});
-   } catch (error) {
-       res.status(500).json({message:"Error,unable to get sum of all data"},error);
-   }
+        ]);
+
+        const moneySpent = SUM_OF_MONEYSPENT.length > 0 ? SUM_OF_MONEYSPENT[0].totalMoneySpent : 0;
+        res.status(200).json({ totalMoneySpent: moneySpent });
+    } catch (error) {
+        console.error("Error retrieving sum:", error);
+        res.status(500).json({ message: "Error, unable to get sum of all data" });
+    }
 });
