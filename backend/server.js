@@ -78,6 +78,7 @@ app.get("/data/sum", async (req, res) => {
         console.error("Error retrieving sum:", error);
         res.status(500).json({ message: "Error, unable to get sum of all data" });
     }
+  });
 
   // Get latest Monthly Income
   app.get("/latestMonthlyIncome", async (req, res) => {
