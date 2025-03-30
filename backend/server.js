@@ -78,4 +78,25 @@ app.get("/data/sum", async (req, res) => {
         console.error("Error retrieving sum:", error);
         res.status(500).json({ message: "Error, unable to get sum of all data" });
     }
+
+  // Get latest Monthly Income
+  app.get("/latestMonthlyIncome", async (req, res) => {
+  try {
+    const latestMonthlyIncome = await Finance.aggregate([
+      { $sort: { _id: -1 } }, // Sort by the most recent entry
+      { $limit: 1 }, // Take only the latest one
+      { $project: { _id: 0, monthlyIncome: 1 } } // Return only the required field
+    ]);
+
+    if (latestMonthlyIncome.length === 0) {
+      return res.status(404).json({ error: "No Monthly Income data found" });
+    }
+
+    res.status(200).json(latestMonthlyIncome[0]); // Return a single object, not an array
+  } catch (error) {
+    console.error("Error fetching Income status:", error);
+    res.status(500).json({ error: "Unable to retrieve Income data" });
+  }
 });
+
+
